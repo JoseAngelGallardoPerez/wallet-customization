@@ -1,0 +1,834 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: 'Wallet customization service'
+security:
+  - bearerAuth: []
+servers:
+  - url: /
+  - url: http://127.0.0.1
+paths:
+  /customization/private/v1/color-schemes:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Creates a new color scheme.
+      description: Create a new color scheme. Available for admins with "view_modify_settings" permission.
+      operationId: createColorScheme
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateColorScheme'
+        required: true
+      responses:
+        '201':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ColorScheme'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Shows a list of color schemes.
+      description: Get a list of color schemes. Available for admins with "view_modify_settings" permission.
+      operationId: lostOfColorScheme
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ColorScheme'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+
+  /customization/private/v1/color-schemes/:id:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Shows a color scheme by passed id.
+      description: Get a color scheme by passed id. Available for admins with "view_modify_settings" permission.
+      operationId: getColorScheme
+      parameters:
+        - name: id
+          in: path
+          description: ID of color scheme
+          required: true
+          schema:
+            type: string
+            format: uint64
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ColorScheme'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Updates color scheme by id.
+      description: Update color scheme by id. Available for admins with "view_modify_settings" permission.
+      operationId: putColorScheme
+      parameters:
+        - name: id
+          in: path
+          description: ID of color scheme
+          required: true
+          schema:
+            type: string
+            format: uint64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateColorScheme'
+        required: true
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ColorScheme'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Deletes color scheme.
+      description: After removing default scheme will be used. Default scheme can not be deleted. Available for admins with "view_modify_settings" permission.
+      operationId: deleteColorScheme
+      parameters:
+        - name: id
+          in: path
+          description: ID of color scheme
+          required: true
+          schema:
+            type: string
+            format: uint64
+      responses:
+        '204':
+          description: Successful request
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+  /customization/private/v1/color-schemes/set-as-active/:id:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Applies color scheme by passed id.
+      description: Apply color scheme by passed id. Available for admins with "view_modify_settings" permission.
+      operationId: setAsActiveColorScheme
+      parameters:
+        - name: id
+          in: path
+          description: ID of color scheme
+          required: true
+          schema:
+            type: string
+            format: uint64
+      responses:
+        '202':
+          description: Successful request
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+  /customization/public/v1/color-schemes/get-active:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Shows active color scheme.
+      description: Get active color scheme.
+      operationId: getActiveColorScheme
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ColorScheme'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+  /customization/public/v1/logo-settings:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Shows a logo settings.
+      description: The settings include logo path, points for cropping and the fav.icon path.
+      operationId: getLogoSettings
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/LogoSettings'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+
+  /customization/private/v1/logo-settings:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Updates logo settings.
+      description: |
+        Updates logo points (for cropping), logo image and fav icon.
+        \
+        Available for admins with "view_modify_settings" permission.
+      operationId: createlogoSettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLogoSettings'
+        required: true
+      responses:
+        '200':
+          description: Successful request
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+  /customization/private/v1/logo:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Uploads temporary logo.
+      description: Link from response can be used to update settings. Available for admins with "view_modify_settings" permission.
+      operationId: uploadTempLogo
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/File'
+        required: true
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UploadedFile'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+
+  /customization/private/v1/favicon:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Uploads temporary icon.
+      description: Link from response can be used to update settings. Available for admins with "view_modify_settings" permission.
+      operationId: uploadTempFavIcon
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/File'
+        required: true
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UploadedFile'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+  /customization/public/v1/gdpr:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Shows GDPR text.
+      operationId: getGdprText
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gdpr'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+  /customization/private/v1/gdpr:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Updates GDPR text.
+      operationId: updateGdprStext
+      description: Updates GDPR text. Available for admins with "view_modify_settings" permission.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Gdpr'
+        required: true
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Gdpr'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+  /customization/public/v1/site-texts:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Shows "Site texts".
+      operationId: getSiteText
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SiteText'
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+  /customization/private/v1/site-texts:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customization
+      summary: Updates "Site texts".
+      description: Available for admins with "view_modify_settings" permission.
+      operationId: updateSiteTexts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSiteText'
+        required: true
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                    $ref: '#/components/schemas/SiteText'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+components:
+  schemas:
+    UpdateLogoSettings:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            xPoint:
+              type: integer
+              example: 10
+            yPoint:
+              type: integer
+              example: 10
+            width:
+              type: integer
+              example: 20
+            height:
+              type: integer
+              example: 20
+    LogoSettings:
+      type: object
+      properties:
+        logo:
+          type: object
+          properties:
+            path:
+              type: string
+              example: "http://example.com/accounts/logo.jpeg"
+            xPoint:
+              type: integer
+              example: 10
+            yPoint:
+              type: integer
+              example: 10
+            width:
+              type: integer
+              example: 200
+            height:
+              type: integer
+              example: 200
+        favicon:
+          type: object
+          properties:
+            path:
+              type: string
+              example: "http://example.com/accounts/fav.icon"
+    UploadedFile:
+      type: object
+      properties:
+        link:
+          type: string
+          example: "http://example.com/accounts/fav.icon"
+    Gdpr:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            label:
+              type: string
+              example: "label"
+            value:
+              type: string
+              example: "label"
+    File:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+    CreateColorScheme:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            name:
+              type: string
+              example: default
+            isActive:
+              type: boolean
+              example: false
+            colors:
+              $ref: '#/components/schemas/Colors'
+    ColorScheme:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint64
+        name:
+          type: string
+          example: default
+        isActive:
+          type: boolean
+          example: false
+        isDefault:
+          type: boolean
+          example: false
+        colors:
+          $ref: '#/components/schemas/Colors'
+    SiteText:
+      type: object
+      properties:
+        key:
+          type: string
+          example: 'color'
+        label:
+          type: string
+          example: 'label'
+        value:
+          type: string
+          example: 'value'
+    UpdateSiteText:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            termsAndConditions:
+              type: string
+              example: 'text'
+            firstLoginText:
+              type: string
+              example: 'text'
+            secondLoginText:
+              type: string
+              example: 'text'
+            thirdLoginText:
+              type: string
+              example: 'text'
+    Colors:
+      type: object
+      properties:
+        headerBackground:
+          type: string
+          example: "#1286f4"
+        headerElements:
+          type: string
+          example: "#2286f4"
+        headerBottomLine:
+          type: string
+          example: "#3286f4"
+        menuBackground:
+          type: string
+          example: "#4286f4"
+        menuElements:
+          type: string
+          example: "#5286f4"
+        mainColor:
+          type: string
+          example: "#7286f4"
+        loginFooter:
+          type: string
+          example: "#8286f4"
+        loginPageMiddle:
+          type: string
+          example: "#9286f4"
+    BadRequestResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BadRequestError'
+    BadRequestError:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Bad Request
+        details:
+          type: string
+          example: Bad Request
+        target:
+          type: string
+          example: common
+    ForbiddenResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ForbiddenError'
+    ForbiddenError:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Forbidden
+        details:
+          type: string
+          example: Forbidden
+        target:
+          type: string
+          example: common
+    NotFoundError:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Not found
+        details:
+          type: string
+          example: Not found
+        target:
+          type: string
+          example: common
+    ValidationErrors:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Text of error
+              detail:
+                type: string
+                example: Text of error
+              source:
+                type: string
+                example: fieeld_name
+              target:
+                type: string
+                example: field
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

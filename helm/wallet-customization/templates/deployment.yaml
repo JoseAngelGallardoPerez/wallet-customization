@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wallet-customization.name" . }}
+  labels:
+  {{- include "wallet-customization.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+  {{- include "wallet-customization.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+    {{- include "wallet-customization.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "wallet-customization.serviceAccountName" . }}
+      securityContext:
+      {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ include "wallet-customization.imageRepositoryWithTag" . }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: public-api
+              containerPort: 80
+            - name: rpc
+              containerPort: {{ .Values.service.ports.rpc }}
+          {{- with .Values.containerPorts }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.containerLivenessProbe.enabled }}
+          livenessProbe:
+            failureThreshold: {{ .Values.containerLivenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.containerLivenessProbe.periodSeconds }}
+            httpGet:
+              path: /{{ .Values.appApiPathPrefix }}/health-check
+              port: 80
+          {{- end }}
+          env:
+            - name: VELMIE_WALLET_CUSTOMIZATION_DB_HOST
+              value: "{{ required ".Values.appEnv.dbHost is required! Make sure to provide it." .Values.appEnv.dbHost }}"
+            - name: VELMIE_WALLET_CUSTOMIZATION_DB_PORT
+              value: "{{ required ".Values.appEnv.dbPort is required! Make sure to provide it." .Values.appEnv.dbPort }}"
+            - name: VELMIE_WALLET_CUSTOMIZATION_DB_USER
+              value: "{{ required ".Values.appEnv.dbUser is required! Make sure to provide it." .Values.appEnv.dbUser }}"
+            - name: VELMIE_WALLET_CUSTOMIZATION_DB_PASS
+              value: "{{ required ".Values.appEnv.dbPass is required! Make sure to provide it." .Values.appEnv.dbPass }}"
+            - name: VELMIE_WALLET_CUSTOMIZATION_DB_NAME
+              value: "{{ required ".Values.appEnv.dbName is required! Make sure to provide it." .Values.appEnv.dbName }}"
+            - name: VELMIE_WALLET_CUSTOMIZATION_DB_DRIV
+              value: "mysql"
+            - name: VELMIE_WALLET_CUSTOMIZATION_CORS_METHODS
+              value: "{{ required ".Values.appEnv.corsMethods is required! Make sure to provide it." .Values.appEnv.corsMethods }}"
+            - name: VELMIE_WALLET_CUSTOMIZATION_CORS_ORIGIN
+              value: "{{ required ".Values.appEnv.corsOrigins is required! Make sure to provide it." .Values.appEnv.corsOrigins }}"
+            - name: VELMIE_WALLET_CUSTOMIZATION_CORS_HEADERS
+              value: "{{ required ".Values.appEnv.corsHeaders is required! Make sure to provide it." .Values.appEnv.corsHeaders }}"
+            - name: PHP_INI_MEMORY_LIMIT
+              value: "{{ .Values.phpIni.memoryLimit }}"
+            - name: PHP_INI_MAX_EXECUTION_TIME
+              value: "{{ .Values.phpIni.maxExecutionTime }}"
+            - name: PHP_INI_MAX_INPUT_TIME
+              value: "{{ .Values.phpIni.maxInputTime }}"
+            - name: PHP_INI_DISPLAY_ERRORS
+              value: "{{ .Values.phpIni.displayErrors }}"
+            - name: PHP_INI_POST_MAX_SIZE
+              value: "{{ .Values.phpIni.postMaxSize }}"
+            - name: PHP_INI_FILE_UPLOADS
+              value: "{{ .Values.phpIni.fileUploads }}"
+            - name: PHP_INI_UPLOAD_MAX_FILESIZE
+              value: "{{ .Values.phpIni.uploadMaxFilesize }}"
+            - name: PHP_INI_MAX_FILE_UPLOADS
+              value: "{{ .Values.phpIni.maxFileUploads }}"
+            - name: PHP_OPCACHE_ENABLE
+              value: "{{ .Values.phpIni.opcacheEnable }}"
+            - name: PHP_OPCACHE_MEMORY_CONSUMPTION
+              value: "{{ .Values.phpIni.opcacheMemoryConsumption }}"
+            - name: PHP_OPCACHE_MAX_ACCELERATED_FILES
+              value: "{{ .Values.phpIni.opcacheMaxAcceleratedFiles }}"
+            - name: PHP_OPCACHE_MAX_WASTED_PERCENTAGE
+              value: "{{ .Values.phpIni.opcacheMaxWastedPercentage }}"
+            - name: PHP_OPCACHE_REVALIDATE_FREQ
+              value: "{{ .Values.phpIni.opcacheRevalidateFreq }}"
+            # TODO: get rid of hardcoded values (legacy) - use real service discovery
+            - name: SERVICE_PERMISSIONS
+              value: "http://wallet-permissions:12308"
+            - name: SERVICE_USERS
+              value: "http://wallet-users:12308"
+          resources:
+      {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}
