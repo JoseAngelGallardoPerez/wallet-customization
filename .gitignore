@@ -1,0 +1,10 @@
+.env
+helm/values-dev.yaml
+Homestead.json
+Homestead.yaml
+tilt.yaml
+
+.idea/
+storage/docker/
+tilt_modules/
+vendor/
