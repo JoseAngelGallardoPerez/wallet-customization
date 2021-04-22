@@ -1,0 +1,30 @@
+syntax="proto3";
+
+package velmie.wallet.customization;
+option go_package = "customization";
+
+service CustomizationHandler {
+    rpc GetByKey(Request) returns (Response);
+}
+
+message Customization {
+    int64 Id = 1;
+    string Key = 2;
+    string Type = 3;
+    string Label = 4;
+    string Value = 5;
+}
+
+message Request {
+    string Key = 1;
+}
+
+message Response {
+    Customization customization = 1;
+    Error error = 2;
+}
+
+message Error {
+    string title = 1;
+    string details = 2;
+}
